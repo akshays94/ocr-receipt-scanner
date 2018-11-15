@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}
+
+
+{% block content %}
+	
+	<link rel="stylesheet" href="{% static 'vendor/croppie/croppie.css' %}" />
+	<script src="{% static 'vendor/croppie/croppie.min.js' %}"></script>
+
+	<h5>Upload receipt</h5>
+
+	<form id="upload-form" action="{% url 'claims:upload-receipt' %}" method="post" enctype="multipart/form-data">
+		{% csrf_token %}
+		<input id="file-select" type="file"></input>
+		<button id="upload-button" type="submit" class="btn btn-primary">
+			Upload
+		</button>
+		<span id="msg"></span>
+	</form>
+
+	<img id="my-image" src="" />
+	<button id="rotate-button" class="btn btn-secondary">
+		Rotate
+	</button>
+
+{% endblock content %}
+

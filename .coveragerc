@@ -1,0 +1,5 @@
+[run]
+include = ocr_receipt_scanner/*
+omit = *migrations*, *tests*
+plugins =
+    django_coverage_plugin

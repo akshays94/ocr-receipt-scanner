@@ -1,0 +1,50 @@
+FROM python:3.5
+
+ENV PYTHONUNBUFFERED 1
+
+# RUN apt-get update \
+#   # psycopg2 dependencies
+#   && apt-get install build-deps gcc python3-dev musl-dev \
+#   && apt-get install postgresql-dev \
+#   # Pillow dependencies
+#   && apt-get install jpeg-dev zlib-dev freetype-dev lcms2-dev openjpeg-dev tiff-dev tk-dev tcl-dev \
+#   # CFFI dependencies
+#   && apt-get install libffi-dev py-cffi \
+#   # Translations dependencies
+#   && apt-get install gettext \
+#   # https://docs.djangoproject.com/en/dev/ref/django-admin/#dbshell
+#   && apt-get install postgresql-client
+
+RUN apt-get update
+RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+RUN tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+RUN mv wkhtmltox/bin/wkhtmlto* /usr/bin/
+
+RUN apt-get update && apt-get install libsm6 libxext6
+
+RUN apt-get install tesseract-ocr -y
+
+# Requirements are installed here to ensure they will be cached.
+COPY ./requirements /requirements
+
+RUN pip install --upgrade pip
+
+RUN pip install -r /requirements/local.txt
+
+# imagemagick
+RUN apt-get update \
+	&& apt-get install -y \
+    wget \
+    imagemagick
+
+COPY ./compose/production/django/entrypoint /entrypoint
+RUN sed -i 's/\r//' /entrypoint
+RUN chmod +x /entrypoint
+
+COPY ./compose/local/django/start /start
+RUN sed -i 's/\r//' /start
+RUN chmod +x /start
+
+WORKDIR /app
+
+ENTRYPOINT ["/entrypoint"]

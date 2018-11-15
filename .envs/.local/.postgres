@@ -1,0 +1,7 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=ocr_receipt_scanner
+POSTGRES_USER=KMzgEhZPvFAPcWhUKfwMhxZvMaqyPsKC
+POSTGRES_PASSWORD=2qgbIbSwukmkALuTPAUrsY8IeEtx72vrGUamzXx2kjkdCd7zOpePDyKab3XzlzMB
