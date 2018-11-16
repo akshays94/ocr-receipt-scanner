@@ -1,12 +1,15 @@
 
+no__alternatives = ['n', 'n.', 'no.', 'number', 'nmbr', '#', 'm', 'mo.', 'mo', 'id']
 
-TRIP_TAGS_META = [
+no__paid__alternatives = ['n', 'n.', 'no.', 'number', 'nmbr', '#', 'm', 'mo.', 'mo', 'id', 'paid']
+
+RECEIPT_NO_TAGS_META = [
 	{ 
 		'rank': 1,  
 		'name': 'trip no',
 		'alternatives': {
 			'trip': ['trp', 'tp', 't'],
-			'no': ['n']
+			'no': no__alternatives
 		}
 	},
 	{ 
@@ -14,54 +17,146 @@ TRIP_TAGS_META = [
 		'name': 'receipt no',
 		'alternatives': {
 			'receipt': ['rcpt', 'rpt', 'rct', 'rc', 'r'],
-			'no': ['n']
+			'no': no__alternatives
 		}
 	},
 	{ 
 		'rank': 1,  
-		'name': 'trip',
+		'name': 'transaction no',
 		'alternatives': {
-			'trip': ['trp', 'tp']
+			'transaction': [],
+			'no': no__alternatives
+		}
+	},
+	{ 
+		'rank': 1,  
+		'name': 'bill no',
+		'alternatives': {
+			'bill': [],
+			'no': no__alternatives
+		}
+	},
+	{ 
+		'rank': 1,  
+		'name': 'invoice no',
+		'alternatives': {
+			'invoice': ['inv'],
+			'no': no__alternatives
+		}
+	},
+	{ 
+		'rank': 1,  
+		'name': 'booking no',
+		'alternatives': {
+			'booking': [],
+			'no': no__alternatives
 		}
 	},
 	{ 
 		'rank': 1,  
 		'name': 'receipt',
 		'alternatives': {
-			'receipt': ['rcpt', 'rpt', 'rct', 'rc', 'r']
+			'receipt': ['rcpt', 'rpt', 'rct', 'rc', 'rcpt#', 'rpt#', 'rct#', 'rc#']
+		}
+	},
+	{ 
+		'rank': 1,  
+		'name': 'booking',
+		'alternatives': {
+			'booking': []
+		}
+	},
+	{ 
+		'rank': 1,  
+		'name': 'check',
+		'alternatives': {
+			'check': ['chk']
+		}
+	},
+	{ 
+		'rank': 1,  
+		'name': 'slip no',
+		'alternatives': {
+			'slip': [],
+			'no': no__alternatives
+		}
+	},
+	{ 
+		'rank': 1,  
+		'name': 'slip',
+		'alternatives': {
+			'slip': []
+		}
+	},
+	{ 
+		'rank': 1,  
+		'name': 'bill',
+		'alternatives': {
+			'bill': []
+		}
+	},
+	{ 
+		'rank': 1,  
+		'name': 'invoice',
+		'alternatives': {
+			'invoice': []
 		}
 	}
 ]
 
-def foo():
-	try:
 
-		TRIP_TAGS = list()
-		for meta_data in TRIP_TAGS_META:
-			TRIP_TAGS.append( (meta_data['rank'], meta_data['name']) )
-			
-			main_tag_name = meta_data['name']
+RECEIPT_AMOUNT_TAGS_META = [
+	{
+		'rank': 1,
+		'name': 'amount no',
+		'alternatives': {
+			'amount': ['amt'],
+			'no': no__paid__alternatives
+		}
+	},
+	{
+		'rank': 1,
+		'name': 'amount',
+		'alternatives': {
+			'amount': ['amt']
+		}
+	},
+	{
+		'rank': 1,
+		'name': 'total amount',
+		'alternatives': {
+			'total': ['tot', 'paid', 'fare', 'tutal'],
+			'amount': ['amt']
+		}
+	},
+	{
+		'rank': 2,
+		'name': 'fare',
+		'alternatives': {
+			'fare': []
+		}
+	},
+	{
+		'rank': 2,
+		'name': 'fare amount',
+		'alternatives': {
+			'fare': [],
+			'amount': no__paid__alternatives
+		}
+	},
+	{
+		'rank': 1,
+		'name': 'total',
+		'alternatives': {
+			'total': ['tot', 'tutal', 'totamt', 'tutalamt', 'tutal ss']
+		}
+	},
+	{
+		'rank': 1,
+		'name': 'paid',
+		'alternatives': {
+			'paid': ['paidamt']
+		}
+	},
+]
 
-			for text, alternatives in meta_data['alternatives'].items():
-				print(text, alternatives)
-				for alternative in alternatives:
-					new_tag_name = main_tag_name.replace(text, alternative)
-					TRIP_TAGS.append( (meta_data['rank'], new_tag_name) )
-
-		print(TRIP_TAGS)			
-
-	except Exception as e:
-		print(e)
-
-
-# AMOUNT_TAGS = [
-# 	(1, 'paid'),
-# 	(1, 'amount paid'),
-# 	(1, 'total paid'),
-# 	(2, 'fare'),
-# 	(2, 'total fare'),
-# 	(2, 'paid fare'),
-# 	(2, 'amount fare'),
-# 	(2, 'amt fare'),
-# 	(2, 'fare')
-# ]

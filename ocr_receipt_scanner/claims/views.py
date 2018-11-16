@@ -17,6 +17,8 @@ from django.views.generic import TemplateView, View
 from django.template.response import TemplateResponse
 
 from ocr_receipt_scanner.claims.info_retrieval import *
+from ocr_receipt_scanner.claims.info_retrieval_vars import *
+
 
 try:
     from PIL import Image
@@ -32,7 +34,12 @@ class Home(TemplateView):
 
 			self.template_name = 'claims/add-claim.html'
 
-			print(get_receipt_contents())
+			# corpus = 'CITYCAB PTE LTD\nSHC72925\nTRIP NO\n101120291\nSTART 11/10/2018 20:29\nEND 11/10/2018 20:49\nDISTANCE RUN 13.80 KM\nMETER FARE $\nCITY AREA SUR $\nPEAK HOUR 25% $\nTOTAL FARE $\n12.70\n3.00\n3.20\n18.90\nAMOUNT PAID\n$\n18.90\n'
+
+			# contents = InformationRetrieval(corpus).get_receipt_contents()
+			# print(contents)
+
+			InformationRetrievalTests.perform_tests()
 
 			context = {}
 
@@ -40,6 +47,13 @@ class Home(TemplateView):
 
 		except Exception as e:
 			print(e)
+			kwargs.update({'message': 'Failed ... '})
+
+			response = HttpResponse(json.dumps(kwargs), 
+				content_type='application/json')
+			response.status_code = 400
+
+			return response
 
 
 
