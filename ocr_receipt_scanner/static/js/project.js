@@ -120,6 +120,61 @@ $(document).ready(function () {
 						msg.innerHTML = '<i class="fa fa-check check" style="color: green"></i> Receipt uploaded successfully';
 						uploadButton.innerHTML = 'Upload';
 						
+						response = JSON.parse(xhr.response);
+
+						results = response.results;
+
+						console.log(results)
+
+						console.log(results.receipt_no, results.receipt_amt);
+						
+						// <button type="button" class="btn btn-secondary btn-sm">Small button</button>
+
+						var receiptNoData = results.receipt_no;
+						var receiptAmtData = results.receipt_amt;
+
+						if (receiptNoData !== undefined) {
+							$receiptNoContainer = $(".button-container[data-type=receiptno]");
+							$receiptNoInput = $("input.receiptnoinput");
+
+							$receiptNoInput
+								.attr("value", receiptNoData[0])
+								.parents(".form-group")
+								.removeClass("is-empty");	
+
+
+							$.each(receiptNoData, function(index, value) {
+								var button = document.createElement("button");
+								$(button).attr("type", "button");
+								$(button).attr("data-type", "receiptno");;
+								$(button).attr("data-value", value);
+								$(button).addClass("btn btn-secondary btn-sm suggestbtn");
+								$(button).html(value);
+								$receiptNoContainer.append(button);
+							})
+						}
+
+						if (receiptAmtData !== undefined) {
+							$receiptAmtContainer = $(".button-container[data-type=receiptamt]");
+							$receiptAmtInput = $("input.receiptamtinput");
+
+							$receiptAmtInput
+								.attr("value", receiptAmtData[0])
+								.parents(".form-group")
+								.removeClass("is-empty");	
+
+							$.each(receiptAmtData, function(index, value) {
+								var button = document.createElement("button");
+								$(button).attr("type", "button");
+								$(button).attr("data-type", "receiptamt");
+								$(button).attr("data-value", value);
+								$(button).addClass("btn btn-secondary btn-sm suggestbtn");
+								$(button).html(value);
+								$receiptAmtContainer.append(button);
+							})
+							
+						}
+
 						setTimeout(function () {
 							$(".btn-next").trigger("click");
 						}, 1000);
@@ -144,6 +199,34 @@ $(document).ready(function () {
 		});
 
 	}
+
+	$("body").on("click", ".suggestbtn", function () {
+		console.log("suggestbtn");
+
+		$self = $(this);
+
+		var dataType = $self.attr("data-type");
+		var value = $self.attr("data-value");	
+
+		$receiptNoInput = $("input.receiptnoinput");
+		$receiptAmtInput = $("input.receiptamtinput");
+
+		switch(dataType) {
+			case "receiptno":
+				$container = $receiptNoInput;
+				break;
+			case "receiptamt":
+				$container = $receiptAmtInput;
+				break;
+		}
+
+		console.log($container, value);
+
+		$container
+			.attr("value", value)
+			.parents(".form-group")
+			.removeClass("is-empty");	
+	})
 	
 	$('.wizard-card').bootstrapWizard({
         'tabClass': 'nav nav-pills',

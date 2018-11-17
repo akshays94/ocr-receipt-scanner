@@ -30,7 +30,7 @@ RUN pip install --upgrade pip
 
 RUN pip install -r /requirements/local.txt
 
-RUN pip install google-cloud-vision
+# RUN pip install google-cloud-vision
 
 # RUN pip install --upgrade protobuf
 # RUN pip install --upgrade google-cloud

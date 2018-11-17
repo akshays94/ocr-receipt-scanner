@@ -16,7 +16,7 @@ RECEIPT_NO_TAGS_META = [
 		'rank': 1,  
 		'name': 'receipt no',
 		'alternatives': {
-			'receipt': ['rcpt', 'rpt', 'rct', 'rc', 'r'],
+			'receipt': ['rcpt', 'rpt', 'rct', 'rc', 'r', 'rept'],
 			'no': no__alternatives
 		}
 	},
@@ -56,7 +56,7 @@ RECEIPT_NO_TAGS_META = [
 		'rank': 1,  
 		'name': 'receipt',
 		'alternatives': {
-			'receipt': ['rcpt', 'rpt', 'rct', 'rc', 'rcpt#', 'rpt#', 'rct#', 'rc#']
+			'receipt': ['rcpt', 'rpt', 'rct', 'rc', 'rcpt#', 'rpt#', 'rct#', 'rc#', 'rept', 'rept#']
 		}
 	},
 	{ 
@@ -70,7 +70,7 @@ RECEIPT_NO_TAGS_META = [
 		'rank': 1,  
 		'name': 'check',
 		'alternatives': {
-			'check': ['chk']
+			'check': ['chk', 'check ', 'check #']
 		}
 	},
 	{ 
@@ -158,5 +158,20 @@ RECEIPT_AMOUNT_TAGS_META = [
 			'paid': ['paidamt']
 		}
 	},
+	{
+		'rank': 5,
+		'name': 'subtot',
+		'alternatives': {
+			'subtot': []
+		}
+	},
+	{
+		'rank': 1,
+		'name': 'grand amount',
+		'alternatives': {
+			'grand': ['gr', 'gr.'],
+			'amount': ['amt']
+		}
+	}
 ]
 

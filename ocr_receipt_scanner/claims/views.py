@@ -94,15 +94,23 @@ class UploadReceipt(View):
 
 			# image = types.Image(content=content)
 
-			# # Performs label detection on the image file
-			# response = client.label_detection(image=image)
-			# labels = response.label_annotations
+			# # # Performs label detection on the image file
+			# response = client.text_detection(image=image)
+			# texts = response.text_annotations
 
-			# print('Labels:')
-			# for label in labels:
-			#     print(label.description)
+			# corpus = texts[0].description
 
-			payload = {}
+			# print('corpus', corpus)
+
+			# corpus = 'CITYCAB PTE LTD\nSHC72925\nTRIP NO\n101120291\nSTART 11/10/2018 20:29\nEND 11/10/2018 20:49\nDISTANCE RUN 13.80 KM\nMETER FARE $\nCITY AREA SUR $\nPEAK HOUR 25% $\nTOTAL FARE $\n12.70\n3.00\n3.20\n18.90\nAMOUNT PAID\n$\n18.90\n'
+
+
+
+			results = InformationRetrieval(corpus).get_receipt_contents()	
+
+			payload = {
+				'results': results
+			}
 
 			response = HttpResponse(json.dumps(payload), 
 			content_type='application/json')
