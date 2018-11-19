@@ -15,14 +15,17 @@ $(document).ready(function () {
 
 	var csrf = document.getElementsByName("csrfmiddlewaretoken")[0].value;
 
-	console.log(fileSelect);
+	// console.log(fileSelect);
 
-	var croppie;
+	var files = fileSelect.files;
+	var file = files[0];
 
-	rotateBtn.onclick = function (event) {
-		console.log("rotate button clicked");
-	    croppie.rotate(90);
-	}
+	// var croppie;
+
+	// rotateBtn.onclick = function (event) {
+	// 	console.log("rotate button clicked");
+	//     croppie.rotate(90);
+	// }
 
 	fileSelect.onchange = function (event) {
 		
@@ -30,7 +33,7 @@ $(document).ready(function () {
 
 		msg.innerHTML = '';
 
-		$(rotateBtn).removeClass("disabled");
+		// $(rotateBtn).removeClass("disabled");
 		$(uploadButton).removeClass("disabled");
 
 		var files = fileSelect.files;
@@ -39,31 +42,31 @@ $(document).ready(function () {
 		var fr = new FileReader();
 		var imageUrl = fr.readAsDataURL(file);
 
-		if (croppie !== undefined) {
-			croppie.destroy();
-		}
+		// if (croppie !== undefined) {
+		// 	croppie.destroy();
+		// }
 
 		fr.addEventListener ('load', function () {
 
-			$(rotateBtn).removeClass("hidden");
+			// $(rotateBtn).removeClass("hidden");
 			$(uploadButton).removeClass("hidden");
 
-			imageTag.setAttribute("src", fr.result);
+			// imageTag.setAttribute("src", fr.result);
 
 			// var viewportSize = 300;
 			// var boundarySize = 400;
-			var viewportSize = 300 - 50;
-			var boundarySize = 400 - 100;
+			// var viewportSize = 300 - 50;
+			// var boundarySize = 400 - 100;
 
-			croppie = new Croppie(imageTag, {
-			    viewport: { width: viewportSize, height: viewportSize },
-			    boundary: { width: boundarySize, height: boundarySize },
-			    showZoomer: false,
-			    enableOrientation: true,
-			    enableResize: true,
-			    enableZoom: true,
-			    mouseWheelZoom: 'ctrl'
-			});
+			// croppie = new Croppie(imageTag, {
+			//     viewport: { width: viewportSize, height: viewportSize },
+			//     boundary: { width: boundarySize, height: boundarySize },
+			//     showZoomer: false,
+			//     enableOrientation: true,
+			//     enableResize: true,
+			//     enableZoom: true,
+			//     mouseWheelZoom: 'ctrl'
+			// });
 			
 		})
 
@@ -74,129 +77,249 @@ $(document).ready(function () {
 		event.preventDefault();
 		msg.innerHTML = '';
 
-		croppie.result('blob').then(function(blob) {
-		    
-		    console.log("result blob", blob);
-			
-			msg.innerHTML 
+		window.scrollTo(0,document.body.scrollHeight);
+
+		msg.innerHTML 
 				= '<i class="fa fa-circle-o-notch fa-spin" style="color: red"></i> Uploading and scanning receipt... Please wait ... ';
 
-			$(rotateBtn).addClass("disabled");
-			$(uploadButton).addClass("disabled");
+		/* ---------------------------------------------------------------- */ 
 
-			// var files = fileSelect.files;
+		var files = fileSelect.files;
 
-			// var file = files[0];
-			// console.log(files, file);
+		var file = files[0];
+		console.log(files, file);
 
-			// var isValidImageFile = file.type.match('image.*')
+		var isValidImageFile = file.type.match('image.*')
 
-			var isValidImageFile = true;
+		// var isValidImageFile = true;
 
-			if (isValidImageFile) {
-				
-				var formData = new FormData();
-				// formData.append("receipt", file, file.name);
+		if (isValidImageFile) {
+			
+			var formData = new FormData();
+			formData.append("receipt", file, file.name);
 
-				if (blob.content_type === 'image/png') {
-					var fileName = 'akshay.png';
-				} else {
-					var fileName = 'akshay.png';						
-				}
+			// if (blob.content_type === 'image/png') {
+			// 	var fileName = 'akshay.png';
+			// } else {
+			// 	var fileName = 'akshay.png';						
+			// }
 
-				formData.append("receipt", blob, fileName);
-				formData.append("csrfmiddlewaretoken", csrf);
+			// formData.append("receipt", blob, fileName);
+			formData.append("csrfmiddlewaretoken", csrf);
 
-				for (var pair of formData.entries()) {
-				    console.log(pair[0]+ ', ' + pair[1]); 
-				}
-
-				var xhr = new XMLHttpRequest();
-				xhr.open('POST', form.action, true);
-				
-				xhr.onload = function () {
-					if (xhr.status === 200) {
-
-						msg.innerHTML = '<i class="fa fa-check check" style="color: green"></i> Receipt uploaded successfully';
-						uploadButton.innerHTML = 'Upload';
-						
-						response = JSON.parse(xhr.response);
-
-						results = response.results;
-
-						console.log(results)
-
-						console.log(results.receipt_no, results.receipt_amt);
-						
-						// <button type="button" class="btn btn-secondary btn-sm">Small button</button>
-
-						var receiptNoData = results.receipt_no;
-						var receiptAmtData = results.receipt_amt;
-
-						if (receiptNoData !== undefined) {
-							$receiptNoContainer = $(".button-container[data-type=receiptno]");
-							$receiptNoInput = $("input.receiptnoinput");
-
-							$receiptNoInput
-								.attr("value", receiptNoData[0])
-								.parents(".form-group")
-								.removeClass("is-empty");	
-
-
-							$.each(receiptNoData, function(index, value) {
-								var button = document.createElement("button");
-								$(button).attr("type", "button");
-								$(button).attr("data-type", "receiptno");;
-								$(button).attr("data-value", value);
-								$(button).addClass("btn btn-secondary btn-sm suggestbtn");
-								$(button).html(value);
-								$receiptNoContainer.append(button);
-							})
-						}
-
-						if (receiptAmtData !== undefined) {
-							$receiptAmtContainer = $(".button-container[data-type=receiptamt]");
-							$receiptAmtInput = $("input.receiptamtinput");
-
-							$receiptAmtInput
-								.attr("value", receiptAmtData[0])
-								.parents(".form-group")
-								.removeClass("is-empty");	
-
-							$.each(receiptAmtData, function(index, value) {
-								var button = document.createElement("button");
-								$(button).attr("type", "button");
-								$(button).attr("data-type", "receiptamt");
-								$(button).attr("data-value", value);
-								$(button).addClass("btn btn-secondary btn-sm suggestbtn");
-								$(button).html(value);
-								$receiptAmtContainer.append(button);
-							})
-							
-						}
-
-						setTimeout(function () {
-							$(".btn-next").trigger("click");
-						}, 1000);
-
-					} else {
-
-						alert('An error occurred!');
-
-					}
-				};
-
-				setTimeout(function() {
-
-				xhr.send(formData);
-				}, 2000)
-
-
-			} else {
-				alert("Please select a valid image file");
-				uploadButton.innerHTML = "Upload";
+			for (var pair of formData.entries()) {
+			    console.log(pair[0]+ ', ' + pair[1]); 
 			}
-		});
+
+			var xhr = new XMLHttpRequest();
+			xhr.open('POST', form.action, true);
+			
+			xhr.onload = function () {
+				if (xhr.status === 200) {
+
+					msg.innerHTML = '<i class="fa fa-check check" style="color: green"></i> Receipt uploaded successfully';
+					uploadButton.innerHTML = 'Upload';
+					
+					response = JSON.parse(xhr.response);
+
+					results = response.results;
+
+					console.log(results)
+
+					console.log(results.receipt_no, results.receipt_amt);
+					
+					// <button type="button" class="btn btn-secondary btn-sm">Small button</button>
+
+					var receiptNoData = results.receipt_no;
+					var receiptAmtData = results.receipt_amt;
+
+					if (receiptNoData !== undefined) {
+						$receiptNoContainer = $(".button-container[data-type=receiptno]");
+						$receiptNoInput = $("input.receiptnoinput");
+
+						$receiptNoInput
+							.attr("value", receiptNoData[0])
+							.parents(".form-group")
+							.removeClass("is-empty");	
+
+
+						$.each(receiptNoData, function(index, value) {
+							var button = document.createElement("button");
+							$(button).attr("type", "button");
+							$(button).attr("data-type", "receiptno");;
+							$(button).attr("data-value", value);
+							$(button).addClass("btn btn-secondary btn-sm suggestbtn");
+							$(button).html(value);
+							$receiptNoContainer.append(button);
+						})
+					}
+
+					if (receiptAmtData !== undefined) {
+						$receiptAmtContainer = $(".button-container[data-type=receiptamt]");
+						$receiptAmtInput = $("input.receiptamtinput");
+
+						$receiptAmtInput
+							.attr("value", receiptAmtData[0])
+							.parents(".form-group")
+							.removeClass("is-empty");	
+
+						$.each(receiptAmtData, function(index, value) {
+							var button = document.createElement("button");
+							$(button).attr("type", "button");
+							$(button).attr("data-type", "receiptamt");
+							$(button).attr("data-value", value);
+							$(button).addClass("btn btn-secondary btn-sm suggestbtn");
+							$(button).html(value);
+							$receiptAmtContainer.append(button);
+						})
+						
+					}
+
+					setTimeout(function () {
+						$(".btn-next").trigger("click");
+					}, 1000);
+
+				} else {
+
+					alert('An error occurred!');
+
+				}
+			};
+
+			setTimeout(function() {
+				xhr.send(formData);
+			}, 2000)
+
+
+		} else {
+			alert("Please select a valid image file");
+			uploadButton.innerHTML = "Upload";
+		}
+		/* ---------------------------------------------------------------- */ 
+
+		// croppie.result('blob').then(function(blob) {
+		    
+		//     console.log("result blob", blob);
+			
+		// 	msg.innerHTML 
+		// 		= '<i class="fa fa-circle-o-notch fa-spin" style="color: red"></i> Uploading and scanning receipt... Please wait ... ';
+
+		// 	$(rotateBtn).addClass("disabled");
+		// 	$(uploadButton).addClass("disabled");
+
+		// 	// var files = fileSelect.files;
+
+		// 	// var file = files[0];
+		// 	// console.log(files, file);
+
+		// 	// var isValidImageFile = file.type.match('image.*')
+
+		// 	var isValidImageFile = true;
+
+		// 	if (isValidImageFile) {
+				
+		// 		var formData = new FormData();
+		// 		// formData.append("receipt", file, file.name);
+
+		// 		if (blob.content_type === 'image/png') {
+		// 			var fileName = 'akshay.png';
+		// 		} else {
+		// 			var fileName = 'akshay.png';						
+		// 		}
+
+		// 		formData.append("receipt", blob, fileName);
+		// 		formData.append("csrfmiddlewaretoken", csrf);
+
+		// 		for (var pair of formData.entries()) {
+		// 		    console.log(pair[0]+ ', ' + pair[1]); 
+		// 		}
+
+		// 		var xhr = new XMLHttpRequest();
+		// 		xhr.open('POST', form.action, true);
+				
+		// 		xhr.onload = function () {
+		// 			if (xhr.status === 200) {
+
+		// 				msg.innerHTML = '<i class="fa fa-check check" style="color: green"></i> Receipt uploaded successfully';
+		// 				uploadButton.innerHTML = 'Upload';
+						
+		// 				response = JSON.parse(xhr.response);
+
+		// 				results = response.results;
+
+		// 				console.log(results)
+
+		// 				console.log(results.receipt_no, results.receipt_amt);
+						
+		// 				// <button type="button" class="btn btn-secondary btn-sm">Small button</button>
+
+		// 				var receiptNoData = results.receipt_no;
+		// 				var receiptAmtData = results.receipt_amt;
+
+		// 				if (receiptNoData !== undefined) {
+		// 					$receiptNoContainer = $(".button-container[data-type=receiptno]");
+		// 					$receiptNoInput = $("input.receiptnoinput");
+
+		// 					$receiptNoInput
+		// 						.attr("value", receiptNoData[0])
+		// 						.parents(".form-group")
+		// 						.removeClass("is-empty");	
+
+
+		// 					$.each(receiptNoData, function(index, value) {
+		// 						var button = document.createElement("button");
+		// 						$(button).attr("type", "button");
+		// 						$(button).attr("data-type", "receiptno");;
+		// 						$(button).attr("data-value", value);
+		// 						$(button).addClass("btn btn-secondary btn-sm suggestbtn");
+		// 						$(button).html(value);
+		// 						$receiptNoContainer.append(button);
+		// 					})
+		// 				}
+
+		// 				if (receiptAmtData !== undefined) {
+		// 					$receiptAmtContainer = $(".button-container[data-type=receiptamt]");
+		// 					$receiptAmtInput = $("input.receiptamtinput");
+
+		// 					$receiptAmtInput
+		// 						.attr("value", receiptAmtData[0])
+		// 						.parents(".form-group")
+		// 						.removeClass("is-empty");	
+
+		// 					$.each(receiptAmtData, function(index, value) {
+		// 						var button = document.createElement("button");
+		// 						$(button).attr("type", "button");
+		// 						$(button).attr("data-type", "receiptamt");
+		// 						$(button).attr("data-value", value);
+		// 						$(button).addClass("btn btn-secondary btn-sm suggestbtn");
+		// 						$(button).html(value);
+		// 						$receiptAmtContainer.append(button);
+		// 					})
+							
+		// 				}
+
+		// 				setTimeout(function () {
+		// 					$(".btn-next").trigger("click");
+		// 				}, 1000);
+
+		// 			} else {
+
+		// 				alert('An error occurred!');
+
+		// 			}
+		// 		};
+
+		// 		setTimeout(function() {
+
+		// 		xhr.send(formData);
+		// 		}, 2000)
+
+
+		// 	} else {
+		// 		alert("Please select a valid image file");
+		// 		uploadButton.innerHTML = "Upload";
+		// 	}
+		// });
 
 	}
 

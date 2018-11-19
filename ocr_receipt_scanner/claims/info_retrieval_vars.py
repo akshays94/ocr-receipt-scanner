@@ -8,7 +8,7 @@ RECEIPT_NO_TAGS_META = [
 		'rank': 1,  
 		'name': 'trip no',
 		'alternatives': {
-			'trip': ['trp', 'tp', 't'],
+			'trip': ['trp', 'tp', 't', 'trif'],
 			'no': no__alternatives
 		}
 	},
@@ -148,7 +148,7 @@ RECEIPT_AMOUNT_TAGS_META = [
 		'rank': 1,
 		'name': 'total',
 		'alternatives': {
-			'total': ['tot', 'tutal', 'totamt', 'tutalamt', 'tutal ss']
+			'total': ['tot', 'tutal', 'totamt', 'tutalamt', 'tutal ss', 'total 55']
 		}
 	},
 	{

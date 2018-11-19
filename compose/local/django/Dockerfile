@@ -30,17 +30,11 @@ RUN pip install --upgrade pip
 
 RUN pip install -r /requirements/local.txt
 
-# RUN pip install google-cloud-vision
-
-# RUN pip install --upgrade protobuf
-# RUN pip install --upgrade google-cloud
-
-# RUN python3 -m pip install google-cloud
-
-# RUN apk add --virtual .build-dependencies curl make \
-#   && curl -sSL https://sdk.cloud.google.com
-
-# ENV PATH $PATH:/root/google-cloud-sdk/bin
+# imagemagick
+RUN apt-get update \
+	&& apt-get install -y \
+    wget \
+    imagemagick
 
 COPY ./compose/production/django/entrypoint /entrypoint
 RUN sed -i 's/\r//' /entrypoint

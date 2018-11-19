@@ -1,7 +1,9 @@
 import re
 import itertools
 
+from collections import OrderedDict
 from dateparser.search import search_dates
+
 from ocr_receipt_scanner.claims.info_retrieval_vars import *
 
 
@@ -55,7 +57,7 @@ class InformationRetrievalUtils:
 			raise e
 
 
-	def is_excat_match(self, corpus, tags):
+	def is_excat_match_receipt_no(self, corpus, tags):
 		
 		try:			
 			tag_names = list(map(lambda tag: tag[1], tags))
@@ -94,7 +96,7 @@ class InformationRetrievalUtils:
 			raise e
 
 
-	def is_excat_match_with_some_extra_text_with_spaces(self, corpus, tags):
+	def is_excat_match_receipt_no_with_some_extra_text_with_spaces(self, corpus, tags):
 			
 		try:
 			tag_names = list(map(lambda tag: tag[1], tags))
@@ -251,7 +253,20 @@ class InformationRetrievalUtils:
 			raise e	
 
 
-	def is_excat_match_with_some_extra_text_without_spaces(self, packed_corpus, unpacked_corpus, tags):
+	def drop_alpha_from_text_keep_spaces(self, text):
+	
+		try:
+			
+			text_chars = list(text)
+			only_numbers = list(filter(lambda char: char == ' ' or char == '.' or char.isdigit(), text_chars))
+			return ''.join(only_numbers)
+
+		except Exception as e:
+			print('Error in drop_alpha_from_text', e)
+			raise e			
+
+
+	def is_excat_match_receipt_no_with_some_extra_text_without_spaces(self, packed_corpus, unpacked_corpus, tags):
 		try:
 			
 			is_passed = False
@@ -295,87 +310,10 @@ class InformationRetrievalUtils:
 			raise e		
 			
 
-class ReceiptNumber(InformationRetrievalUtils):
-
-
-	def __init__(self, corpus):
-
-		try:			
-			self.RECEIPT_NO_TAGS = self.make_tags(RECEIPT_NO_TAGS_META)
-			self.corpus = self.remove_extra_spaces(corpus)
-
-			# op: [['00', 'Put', 'ull', '73%'],['16:28'],['+'],['Driver', 'on', 'the', 'way'],['Lim', 'Choo', 'Tong'],['SLG67947', '•', 'Toyota', 'Prius']
-			split_packed_corpus = list(map(lambda text: text.split(), self.corpus))		
-			# op: ['00','Put','ull','73%','16:28','+','Driver','on','the','way','Lim','Choo','Tong','SLG67947']
-			self.unpacked_corpus = list(itertools.chain.from_iterable(split_packed_corpus))
-		except Exception as e:
-			print('Error while creating ReceiptNumber instance', e)
-			raise e
-
-
-	def get_receipt_no(self):
-		try:
-			# print('\n', self.RECEIPT_NO_TAGS)
-			# print('\n', self.corpus)
-
-			success, results = self.is_excat_match(self.corpus, self.RECEIPT_NO_TAGS)
-			
-			if success:
-				return results
-
-			success, with_spaces_results = self.is_excat_match_with_some_extra_text_with_spaces(self.corpus, self.RECEIPT_NO_TAGS)
-
-			success, without_spaces_results= self.is_excat_match_with_some_extra_text_without_spaces(self.corpus, self.unpacked_corpus, self.RECEIPT_NO_TAGS)
-
-			# print('with_spaces_results', with_spaces_results)
-			# print('without_spaces_results', without_spaces_results)
-		
-			with_spaces_results.extend(without_spaces_results)
-
-			if with_spaces_results:
-				return with_spaces_results
-
-			# ===============================
-
-			success, alpha_results = self.is_contains_alpha_and_num(self.unpacked_corpus)
-
-			success, num_results = self.is_large_number(self.unpacked_corpus)
-			
-			alpha_results.extend(num_results)
-
-			if alpha_results:
-				return alpha_results
-
-			return list()	
-
-		except Exception as e:
-			print('error in get_receipt_no', e)
-			raise e
-
-
-
-class ReceiptAmount(InformationRetrievalUtils):
-
-	def __init__(self, corpus):
-		try:
-			self.RECEIPT_AMOUNT_TAGS = self.make_tags(RECEIPT_AMOUNT_TAGS_META)
-			self.corpus = self.remove_extra_spaces(corpus)
-
-			# print(self.RECEIPT_AMOUNT_TAGS, self.corpus)
-
-			split_packed_corpus = list(map(lambda text: text.split(), self.corpus))		
-			self.unpacked_corpus = list(itertools.chain.from_iterable(split_packed_corpus))
-		except Exception as e:
-			print('error while initializing receipt amount instance')
-			raise e
-
-	def is_excat_match_amount(self):
+	def is_excat_match_receipt_amt(self, corpus, tags):
 			
 		try:
 			
-			corpus = self.corpus
-			tags = self.RECEIPT_AMOUNT_TAGS
-
 			tag_names = list(map(lambda tag: tag[1], tags))
 
 			is_passed = False
@@ -442,17 +380,176 @@ class ReceiptAmount(InformationRetrievalUtils):
 			print('error in is_excat_match_amount', e)
 			raise e
 
-		
 
-	def get_receipt_amount(self):
-	
+	def is_excat_match_receipt_amt_with_some_extra_text(self, packed_corpus, unpacked_corpus, tags):
 		try:
-			# print('\n', self.RECEIPT_AMOUNT_TAGS)
+			
+			is_passed = False
+			possible_results = list()
 
-			success, results = self.is_excat_match_amount()
+			tag_names = list(map(lambda tag: tag[1], tags))
+
+			for text in itertools.chain(unpacked_corpus, packed_corpus):
+
+				for tag_name in tag_names:
+
+					found_start_index = text.lower().find(tag_name)
+
+					if not found_start_index == -1:
+
+						contained_value_start_index = found_start_index + len(tag_name)
+
+						contained_value = text[contained_value_start_index:]
+
+						contained_value = self.drop_alpha_from_text_keep_spaces(contained_value)
+
+						numbers = contained_value.strip().split()
+
+						for number in numbers:
+							try:
+								number = float(number)
+								is_passed = True
+								possible_results.append({
+									'value': number,
+									'rank': 1
+								})
+							except Exception as e:
+								continue
+
+			possible_results = sorted( possible_results, key=lambda result: (result.get('rank'), -result.get('value') )) 				
+
+			return is_passed, possible_results
+
+		except Exception as e:
+			print('Error in is_excat_match_receipt_amt_with_some_extra_text:', e)
+			raise e			
+
+
+	def get_all_numbers_from_corpus(self, unpacked_corpus):
+
+		try:
+			
+			is_passed = False
+			possible_results = list()
+
+			AMOUNT_THRESHOLD = 100000
+
+			for text in unpacked_corpus:
+
+				text = self.drop_alpha_from_text_keep_spaces(text)
+
+				numbers = text.strip().split()
+
+				for number in numbers:
+					try:
+						number = float(number)
+
+						if number < AMOUNT_THRESHOLD:
+							is_passed = True
+							possible_results.append({
+								'value': number,
+								'rank': 1
+							})
+
+					except Exception as e:
+						continue
+
+
+			# sorting by rank asc, by amt desc 
+			possible_results = sorted( possible_results, key=lambda result: (result.get('rank'), -result.get('value') ) )			
+
+			return is_passed, possible_results
+
+		except Exception as e:
+			print('error in get_all_numbers_from_corpus', e)
+			raise e
+
+
+class ReceiptNumber(InformationRetrievalUtils):
+
+
+	def __init__(self, corpus):
+
+		try:			
+			self.RECEIPT_NO_TAGS = self.make_tags(RECEIPT_NO_TAGS_META)
+			self.corpus = self.remove_extra_spaces(corpus)
+
+			# op: [['00', 'Put', 'ull', '73%'],['16:28'],['+'],['Driver', 'on', 'the', 'way'],['Lim', 'Choo', 'Tong'],['SLG67947', '•', 'Toyota', 'Prius']
+			split_packed_corpus = list(map(lambda text: text.split(), self.corpus))		
+			# op: ['00','Put','ull','73%','16:28','+','Driver','on','the','way','Lim','Choo','Tong','SLG67947']
+			self.unpacked_corpus = list(itertools.chain.from_iterable(split_packed_corpus))
+		except Exception as e:
+			print('Error while creating ReceiptNumber instance', e)
+			raise e
+
+
+	def get_receipt_no(self):
+		
+		try:
+			success, results = self.is_excat_match_receipt_no(self.corpus, self.RECEIPT_NO_TAGS)
 			
 			if success:
 				return results
+
+			success, with_spaces_results = self.is_excat_match_receipt_no_with_some_extra_text_with_spaces(self.corpus, self.RECEIPT_NO_TAGS)
+
+			success, without_spaces_results= self.is_excat_match_receipt_no_with_some_extra_text_without_spaces(self.corpus, self.unpacked_corpus, self.RECEIPT_NO_TAGS)
+		
+			with_spaces_results.extend(without_spaces_results)
+
+			if with_spaces_results:
+				return with_spaces_results
+
+			# ===============================
+
+			success, alpha_results = self.is_contains_alpha_and_num(self.unpacked_corpus)
+
+			success, num_results = self.is_large_number(self.unpacked_corpus)
+			
+			alpha_results.extend(num_results)
+
+			if alpha_results:
+				return alpha_results
+
+			return list()	
+
+		except Exception as e:
+			print('error in get_receipt_no', e)
+			raise e
+
+
+
+class ReceiptAmount(InformationRetrievalUtils):
+
+	def __init__(self, corpus):
+		try:
+			self.RECEIPT_AMOUNT_TAGS = self.make_tags(RECEIPT_AMOUNT_TAGS_META)
+			self.corpus = self.remove_extra_spaces(corpus)
+
+			split_packed_corpus = list(map(lambda text: text.split(), self.corpus))		
+			self.unpacked_corpus = list(itertools.chain.from_iterable(split_packed_corpus))
+		except Exception as e:
+			print('error while initializing receipt amount instance')
+			raise e
+
+	
+	def get_receipt_amount(self):
+	
+		try:
+
+			success, excat_results = self.is_excat_match_receipt_amt(self.corpus, self.RECEIPT_AMOUNT_TAGS)
+
+			success, extra_text_results= self.is_excat_match_receipt_amt_with_some_extra_text(self.corpus, self.unpacked_corpus, self.RECEIPT_AMOUNT_TAGS)
+		
+			excat_results.extend(extra_text_results)
+
+			if excat_results:
+				return excat_results
+
+			success, all_numbers = self.get_all_numbers_from_corpus(self.unpacked_corpus)
+			
+			if all_numbers:
+				return all_numbers		
 
 			return list()	
 
@@ -471,19 +568,31 @@ class InformationRetrieval:
 
 	def get_receipt_contents(self):
 		try:
-			print(self.CORPUS)
+			# print(self.CORPUS)
 
-			receipt_no_data = ReceiptNumber(self.CORPUS).get_receipt_no()
+			# receipt no.
+			receipt_no_instance = ReceiptNumber(self.CORPUS)
+			
+			receipt_no_data = receipt_no_instance.get_receipt_no()
 
-			receipt_no_data = list(map(lambda item: item.get('value'), receipt_no_data))
+			receipt_no_data = list(map(lambda item: item.get('value').strip(), receipt_no_data))
 
-			receipt_amt_data = ReceiptAmount(self.CORPUS).get_receipt_amount()
+			receipt_no_data = list(OrderedDict.fromkeys(receipt_no_data)) 
 
-			receipt_amt_data = list(map(lambda item: item.get('value'), receipt_amt_data))
+			# receipt amount
+			receipt_amt_instance = ReceiptAmount(self.CORPUS)
+
+			receipt_amt_data = receipt_amt_instance.get_receipt_amount()
+
+			receipt_amt_data = list(map(lambda item: str(item.get('value')).strip(), receipt_amt_data))
+
+			receipt_amt_data = list(OrderedDict.fromkeys(receipt_amt_data)) 
 
 			return {
 				'receipt_no': receipt_no_data,
-				'receipt_amt': receipt_amt_data
+				'receipt_amt': receipt_amt_data,
+				'receipt_no_tags': receipt_no_instance.RECEIPT_NO_TAGS,
+				'receipt_amt_tags': receipt_amt_instance.RECEIPT_AMOUNT_TAGS
 			}
 
 		except Exception as e:
@@ -544,7 +653,7 @@ class InformationRetrievalTests:
 
 				'SARI RATU\nRestaurant &amp; Catering PTE LTD\n20 Pahang Street\nSingapore 198617\nTel : 62949983 Fax : 62949913\n24/12/2014 18:00 Tm: ToolShift201412241\nTable Svr:Cashier 001\nBill:A076070\n5.00\n1 Alpokat Juice\n1 Ayam Kg. Panggang\n2 WHITE RICE\n1 Telur Dadar\n1 Sambal Grg\n1 Sambal Hij/Merah\n1 Sayur Lodeh\n5.00\n2.00\n2.00\n2.50\n1.50\n2.50\nTOTAL\nVISA\n20.50\n50.50\n7093\n',
 
-				'SETAN\nSINGAPORE\nJURONG EAST\nCO.REG.NO. : 197001177H\nGST REG. NO. : M2-0011480-9\nTEL NO. : 6896-7777\nCOUNTER:6713\n01/05/2015 (Fri) 15:24\n60-SWEETS\nS#7316509\nCHATERAISE\n4.70\nS#7316509\nCHATERAISE\n1.90\nTOTAL\nGST ON GDS\n6.60\n0.43\nVISA\n(************2459.67130198)\n6.60\nRECEIPT:0198/006093CL\nTHANK YOU\n2 ITEMS\nNO I-POINTS ENTITLED FOR\nPURCHASE FROM BAKERY.\nLIQUOR AND CIGARETTES\n'
+				'SETAN\nSINGAPORE\nJURONG EAST\nCO.REG.NO. : 197001177H\nGST REG. NO. : M2-0011480-9\nTEL NO. : 6896-7777\nCOUNTER:6713\n01/05/2015 (Fri) 15:24\n60-SWEETS\nS#7316509\nCHATERAISE\n4.70\nS#7316509\nCHATERAISE\n1.90\nTOTAL\nGST ON GDS\n6.60\n0.43\nVISA\n(************2459.67130198)\n6.60\nRECEIPT:0198/006093CL\nTHANK YOU\n2 ITEMS\nNO I-POINTS ENTITLED FOR\nPURCHASE FROM BAKERY.\nLIQUOR AND CIGARETTES\n',
 
 
 				# go11
@@ -584,17 +693,34 @@ class InformationRetrievalTests:
 				'Mastellae\nOST Reno:201504766Z\n36 BEACH ROAD\n#02-02 SIPORE 189756\nTABLE = BARS\nPaxei OP:ANG XIUTING RACHEL\nPOS Title:OrderStation\nPOS:P0501\nRept#:A17000015474 19/07/2017 20:39\n1 Guac n Chips\n$11.00\n1 Fish Tacos (2)\n$12.00\n1 Classic Frozen\n$23.00\nSUBTOTAL\n$46.00\n10% Svr Chrg\n$4.60\n7% GST\n$3.54\nTOTAL\n$54.14\nThank you\nSee you again!\nPresettlement Bill\n19/07/2017 21:20\n',
    	      
 				'BLIS\nP UI\nTUUUU\nTel : 65099698 Fax : 65091996\nGST NO.: M2-0117072-9\nTABLE: 4 Check: 134175\nDate : 09 Jul, 13 Time: 12:58\nStaff: Linda Foo Cover: 6\nPrint: 1\n1\n2\n1\nSprite-Can\nDF Seafood Platter\nGrilFishFillet/Fries\nBK Rice/Pork Chop\nSpaghetti/FishFillet\nSpaghetti/Porkchop\nRice/ChknP.Ssg&amp;Mush\nSet Lunch Add $4\n2.60\n31.60\n9.80\n9.80\n10.80\n9.80\n7.80\n4.00\n1\n1\nSubtot\nS.C. (10%)\n86.20\n8.62\nLLA\n'
+
+				# performed calls
+				'CONFORT TRAMSPORTOT ION\nSHC 19482\nTRIP NO\nSTART 16 02/2015 00:27\nEND 16 02/2015 00:54\nDISTANCE RUN 18.6 KM\n021600270\nMETER FARE 15.95\nLATE NIGHT 50%\nTOTAL FARE\n8.00\n23,95\nAMOUNT PAID 23.95\n',
+
+				'COMFORT TRANSPORTATION\nSH 7919L\nTRIP NO\nSTART 21/03/2014 19:37\nEND\nDISTANCE RUN\n032119370\n21/03/2014 19:49\n3.4 KM\nMETER FARE 6.70\nCITY AREA SUR $ 3.00\nPTE BOOKING $ 4.00\nPEAK HOUR 25% $ 1.70\nTOTAL FARE 15.40\nAMOUNT PAID 15.40\n',
+
+				'COMFORT TRANSPORTATION\nSHC2231B\nTRIF NO\n333470794\nSTART 25/05/2011 23:47\nEND 26/05/2011 00:04\nDISTANCE RUN 17.7 KM\nMETER FARE 12.60\nCURR BOOKING 2.50\nfdi\nLATE NIGHT 50 $ 1.10\nTOTAL\n$ 16.20\n',
+
+				'SHIRT\nOy\nDIAL-4-CAB\nTEL: 6555 8883\nW22\nSHB408C\nRECEIPT N. 6384\nFRM 92/10/19 22:38\nTO 02/10/18 22:54\nKM RUN\n8.6\nFARE\n9.40\nAIRPORT\nPEAK 25\nTOTAL 55 14.75\nHAVE A NICE DAY\n'
+
 			]
 
 			print('='*30)
 			print('RUNNING TESTS ON {} SAMPLES'.format(len(test_data)))
 			print('='*30)
 
+			print('Data|Receipt No|Receipt Amount')
 			for data in test_data:
 				print(data.split('\n'))
 				contents = InformationRetrieval(data).get_receipt_contents()
 				print('\n', contents)
 				print('-'*25)
+
+				# print('{data}|{receiptno}|{receiptamt}'.format(**{
+				# 		'data': str(', '.join(data.split('\n'))),
+				# 		'receiptno': str(' -- '.join(contents.get('receipt_no'))) if contents.get('receipt_no') else '',
+				# 		'receiptamt': str(' -- '.join(contents.get('receipt_amt'))) if contents.get('receipt_amt') else ''
+				# 	}))
 
 			# for data in test_data:
 			# 	print('-'*25)

@@ -13,7 +13,10 @@ if [ "$1" == "generate_tenant_migrations" ]; then
 	echo -e "Executing makemigrations followed by migrate..."
 	docker-compose -f local.yml run django python manage.py makemigrations administrator common personnel competence leaves claims benefits learning performance succession 
 
-
+elif [ "$1" == "migrate" ]; then
+	docker-compose -f local.yml run django python manage.py makemigrations
+	docker-compose -f local.yml run django python manage.py migrate
+	
 elif [ "$1" == "migrate_shared_schemas" ]; then
 	echo -e "Executing makemigrations followed by migrate..."
 	docker-compose -f local.yml run django python manage.py makemigrations customer

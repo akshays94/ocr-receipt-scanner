@@ -146,6 +146,15 @@ class UploadReceipt(View):
 				})
 			os.system(cmd)
 
+			# convert dragon.gif    -resize 50%  half_dragon.gif
+
+			# # Change size
+			# print('Resizing the image ... ')
+			# cmd = 'convert {location_to_save} -resize 150% {location_to_save}'.format(**{
+			# 		'location_to_save': location_to_save
+			# 	})
+			# os.system(cmd)
+
 			# adding small border to image
 			# print('adding a small border to the image ... ')
 			# cmd = 'convert {location_to_save} -bordercolor White -border 10x10 {location_to_save}'.format(**{

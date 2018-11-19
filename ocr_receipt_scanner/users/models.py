@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
 
-class User(AbstractUser):
+class User(AbstractUser): 
 
     # First Name and Last Name do not cover name patterns
     # around the globe.
