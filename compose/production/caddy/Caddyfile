@@ -1,8 +1,8 @@
-www.{$DOMAIN_NAME} {
-    redir https://{$DOMAIN_NAME}
+52.66.198.99 {
+    redir https://52.66.198.99
 }
 
-{$DOMAIN_NAME} {
+52.66.198.99 {
     proxy / django:5000 {
         header_upstream Host {host}
         header_upstream X-Real-IP {remote}
