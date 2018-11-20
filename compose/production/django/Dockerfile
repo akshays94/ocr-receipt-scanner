@@ -23,8 +23,11 @@ COPY ./requirements /requirements
 RUN pip install --no-cache-dir -r /requirements/production.txt \
     && rm -rf /requirements
 
-RUN addgroup -S django \
-    && adduser -S -G django django
+# RUN addgroup -S django \
+#     && adduser -S -G django django
+
+RUN groupadd -r django \
+    && useradd -r -g django django
 
 COPY ./compose/production/django/entrypoint /entrypoint
 RUN sed -i 's/\r//' /entrypoint
