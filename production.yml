@@ -13,7 +13,6 @@ services:
     image: ocr_receipt_scanner_production_django
     depends_on:
       - postgres
-      - redis
     env_file:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
