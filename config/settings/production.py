@@ -77,7 +77,10 @@ AWS_S3_OBJECT_PARAMETERS = {
 # ------------------------
 
 STATICFILES_STORAGE = 'config.settings.production.StaticRootS3Boto3Storage'
-STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/'
+# STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/'
+STATIC_URL = 'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/'.format(**{
+        'AWS_STORAGE_BUCKET_NAME': AWS_STORAGE_BUCKET_NAME
+    })
 
 # MEDIA
 # ------------------------------------------------------------------------------
@@ -98,7 +101,10 @@ class MediaRootS3Boto3Storage(S3Boto3Storage):
 
 # endregion
 DEFAULT_FILE_STORAGE = 'config.settings.production.MediaRootS3Boto3Storage'
-MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/'
+# MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/'
+MEDIA_URL = 'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/'.format(**{
+        'AWS_STORAGE_BUCKET_NAME': AWS_STORAGE_BUCKET_NAME
+    })
 
 # TEMPLATES
 # ------------------------------------------------------------------------------
