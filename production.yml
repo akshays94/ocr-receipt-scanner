@@ -13,6 +13,8 @@ services:
     image: ocr_receipt_scanner_production_django
     depends_on:
       - postgres
+    expose:
+      - '5000'  
     env_file:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
