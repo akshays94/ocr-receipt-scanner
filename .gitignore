@@ -273,9 +273,9 @@ ocr_receipt_scanner/media/
 
 
 .ipython/
-.env
-.envs/*
-!.envs/.local/
+# .env
+# .envs/*
+# !.envs/.local/
 
 
 apikey.json
