@@ -62,11 +62,6 @@ DJANGO_APPS = [
     'django.contrib.admin',
 ]
 THIRD_PARTY_APPS = [
-    'crispy_forms',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'rest_framework',
 ]
 LOCAL_APPS = [
     'ocr_receipt_scanner.users.apps.UsersAppConfig',
@@ -88,7 +83,7 @@ MIGRATION_MODULES = {
 # https://docs.djangoproject.com/en/dev/ref/settings/#authentication-backends
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
+    # 'allauth.account.auth_backends.AuthenticationBackend',
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
 AUTH_USER_MODEL = 'users.User'
@@ -244,7 +239,7 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_ADAPTER = 'ocr_receipt_scanner.users.adapters.AccountAdapter'
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-SOCIALACCOUNT_ADAPTER = 'ocr_receipt_scanner.users.adapters.SocialAccountAdapter'
+# SOCIALACCOUNT_ADAPTER = 'ocr_receipt_scanner.users.adapters.SocialAccountAdapter'
 
 
 # Your stuff...
