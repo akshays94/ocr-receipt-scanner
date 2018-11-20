@@ -21,7 +21,7 @@ from ocr_receipt_scanner.claims.models import *
 from ocr_receipt_scanner.claims.info_retrieval import *
 from ocr_receipt_scanner.claims.info_retrieval_vars import *
 
-# 13.126.130.131
+#IP Address 13.126.130.131
 
 try:
     from PIL import Image
