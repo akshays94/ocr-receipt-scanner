@@ -17,13 +17,14 @@ RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkh
 RUN tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
 RUN mv wkhtmltox/bin/wkhtmlto* /usr/bin/ 
 
-RUN addgroup -S django \
-    && adduser -S -G django django
 
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements /requirements
 RUN pip install --no-cache-dir -r /requirements/production.txt \
     && rm -rf /requirements
+
+RUN addgroup -S django \
+    && adduser -S -G django django
 
 COPY ./compose/production/django/entrypoint /entrypoint
 RUN sed -i 's/\r//' /entrypoint
