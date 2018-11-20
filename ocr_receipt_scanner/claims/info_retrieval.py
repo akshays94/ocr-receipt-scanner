@@ -120,7 +120,6 @@ class InformationRetrievalUtils:
 			
 
 				# op: 'trip no'
-
 				contained_tag_name = containing_tag_names_desc[0]
 				
 				tag_name_start_index \

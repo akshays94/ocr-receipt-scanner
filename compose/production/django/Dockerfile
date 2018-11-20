@@ -1,15 +1,21 @@
-FROM python:3.6-alpine
+# FROM python:3.6-alpine 
+FROM python:3.5
 
 ENV PYTHONUNBUFFERED 1
 
-RUN apk update \
-  # psycopg2 dependencies
-  && apk add --virtual build-deps gcc python3-dev musl-dev \
-  && apk add postgresql-dev \
-  # Pillow dependencies
-  && apk add jpeg-dev zlib-dev freetype-dev lcms2-dev openjpeg-dev tiff-dev tk-dev tcl-dev \
-  # CFFI dependencies
-  && apk add libffi-dev py-cffi
+# RUN apk update \
+#   # psycopg2 dependencies
+#   && apk add --virtual build-deps gcc python3-dev musl-dev \
+#   && apk add postgresql-dev \
+#   # Pillow dependencies
+#   && apk add jpeg-dev zlib-dev freetype-dev lcms2-dev openjpeg-dev tiff-dev tk-dev tcl-dev \
+#   # CFFI dependencies
+#   && apk add libffi-dev py-cffi
+
+RUN apt-get update
+RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+RUN tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+RUN mv wkhtmltox/bin/wkhtmlto* /usr/bin/ 
 
 RUN addgroup -S django \
     && adduser -S -G django django
