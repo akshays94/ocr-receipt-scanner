@@ -1,8 +1,4 @@
 27.54.45.68 {
-    redir https://27.54.45.68
-}
-
-27.54.45.68 {
     proxy / django:5000 {
         header_upstream Host {host}
         header_upstream X-Real-IP {remote}
