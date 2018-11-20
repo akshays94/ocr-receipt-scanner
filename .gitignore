@@ -65,9 +65,9 @@ target/
 
 
 # Environments
-.venv
-venv/
-ENV/
+# .venv
+# venv/
+# ENV/
 
 # Rope project settings
 .ropeproject
