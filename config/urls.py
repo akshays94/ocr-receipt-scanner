@@ -24,8 +24,7 @@ urlpatterns = [
         "claims/",
         # include("ocr_receipt_scanner.claims.urls", namespace="claims"),
         include(('ocr_receipt_scanner.claims.urls', 'claims'), namespace='claims')
-    ),
-    path("accounts/", include("allauth.urls")),
+    )
     # Your stuff: custom urls includes go here
 ] + static(
     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
