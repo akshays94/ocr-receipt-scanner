@@ -37,6 +37,8 @@ class Home(TemplateView):
 
 			self.template_name = 'claims/add-claim.html'
 
+			print('claims home')
+
 			# corpus = 'CITYCAB PTE LTD\nSHC72925\nTRIP NO\n101120291\nSTART 11/10/2018 20:29\nEND 11/10/2018 20:49\nDISTANCE RUN 13.80 KM\nMETER FARE $\nCITY AREA SUR $\nPEAK HOUR 25% $\nTOTAL FARE $\n12.70\n3.00\n3.20\n18.90\nAMOUNT PAID\n$\n18.90\n'
 
 			# contents = InformationRetrieval(corpus).get_receipt_contents()
