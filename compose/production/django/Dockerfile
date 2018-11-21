@@ -29,10 +29,9 @@ RUN pip install --no-cache-dir -r /requirements/production.txt \
 RUN groupadd -r django \
     && useradd -r -g django django
 
-
 COPY . /app
 
-RUN chown -R django:django /app
+RUN chown -v -R django:django /app
 
 COPY ./compose/production/django/entrypoint /entrypoint
 RUN sed -i 's/\r//' /entrypoint
