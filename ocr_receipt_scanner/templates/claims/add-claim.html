@@ -96,7 +96,7 @@
 
 								<div class="tab-pane" id="fillform">
 									<h4 class="info-text">
-										Officia maxime ab libero, eligendi sed possimus, reprehenderit optio veniam.
+										Please review your details
 									</h4>
 									<div class="row">
 										<div class="col-sm-12">
@@ -137,8 +137,14 @@
 							<div class="wizard-footer">
 								<div class="pull-right">
 									<input type='button' class='btn btn-next btn-fill btn-danger btn-wd hidden' name='next' value='Next' />
-									<input type='button' class='btn btn-finish btn-fill btn-danger btn-wd' name='finish' value='Finish' />
+									<input type='button' class='btn btn-finish btn-fill btn-danger btn-wd' name='finish' value='Submit' onclick="redirectToSuccess()" />
 								</div>
+								<script>
+									function redirectToSuccess() {
+										console.log("somethigng")
+										window.location.href = "{% url 'claims:claim-success' %}";
+									}
+								</script>
 								<div class="pull-left">
 									<input type='button' class='btn btn-previous btn-fill btn-default btn-wd' name='previous' value='Previous' />
 								</div>

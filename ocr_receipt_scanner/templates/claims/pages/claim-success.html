@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}
+
+{% block pagecss %}
+	<link rel="apple-touch-icon" sizes="76x76" href="{% static 'images/tim/apple-icon.png' %}" />
+	<link rel="icon" type="image/png" href="{% static 'images/tim/favicon.png' %}" />
+
+	<!--     Fonts and icons     -->
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
+
+	<!-- CSS Files -->
+	<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" />
+	<link href="{% static 'css/material-bootstrap-wizard.css' %}" rel="stylesheet" />
+	<link href="{% static 'css/demo.css' %}" rel="stylesheet" />
+
+	<link rel="stylesheet" href="{% static 'vendor/croppie/croppie.css' %}" />
+{% endblock pagecss %}
+
+{% block content %}
+
+		<div class="row">
+			<div class="col-sm-8 col-sm-offset-2">
+			<div class="wizard-container">
+				<div class="card wizard-card" data-color="red" id="wizard">
+					<div class="imgcontainer">
+						<img src="{% static 'images/success.gif' %}" alt="" style="width: 100%">
+					</div>
+					<div class="wizard-header">
+						<h3 class="wizard-title">
+							Request Created Successfully
+						</h3>					
+					</div>
+					<a href="{% url 'claims:home' %}" class='btn btn-fill btn-blue btn-wd' style="width: 60%; margin: auto; margin-bottom: 25px;">
+						Create New Request
+					</a>	
+					<div class="wizard-footer">
+					</div>	
+				</div>
+			</div>		
+			</div>
+		</div>
+
+{% endblock content %}
