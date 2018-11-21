@@ -10,7 +10,7 @@ ALLOWED_HOSTS = ['27.54.45.68']
 
 # DATABASES
 # ------------------------------------------------------------------------------
-DATABASES['default'] = env.db('DATABASE_URL')  # noqa F405
+DATABASES['default'] = env.db('DATABASE_URL', default='postgres://KMzgEhZPvFAPcWhUKfwMhxZvMaqyPsKC:kX0VszK5Ux4hM19epIo8ooTniC35ad3yZ2KHiH2Zcd7znB7MI0NlMrHEBtzcn8S5@postgres:5432/ocr_receipt_scanner')  # noqa F405
 DATABASES['default']['ATOMIC_REQUESTS'] = True  # noqa F405
 DATABASES['default']['CONN_MAX_AGE'] = env.int('CONN_MAX_AGE', default=60)  # noqa F405
 
