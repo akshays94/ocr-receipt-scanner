@@ -147,6 +147,7 @@ class UploadReceipt(View):
 			return response
 
 		except Exception as e:
+			raise e
 			print(e)
 			kwargs.update({'message': 'Failed ... '})
 
