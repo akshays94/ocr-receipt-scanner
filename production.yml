@@ -30,3 +30,12 @@ services:
       - production_postgres_data_backups:/backups
     env_file:
       - ./.envs/.production/.postgres
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./compose/production/nginx/Dockerfile
+    ports:
+      - '0.0.0.0:80:80'      
+    depends_on:
+      - django  
