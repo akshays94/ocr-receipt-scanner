@@ -38,4 +38,8 @@ services:
     ports:
       - '0.0.0.0:80:80'      
     depends_on:
-      - django  
+      - django
+    volumes_from:
+      - django
+    links:
+      - django    
