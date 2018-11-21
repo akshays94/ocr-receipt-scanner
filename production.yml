@@ -21,6 +21,7 @@ services:
     command: /start
     volumes:
       - .:/app
+      - /tmp/:/tmp/
 
   postgres:
     build:
