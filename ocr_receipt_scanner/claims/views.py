@@ -70,9 +70,9 @@ class UploadReceipt(View):
 			print('receipt', receipt)
 
 			# =======================================================
-			fs = FileSystemStorage()
-			filename = fs.save(receipt.name, receipt)
-			file_name = fs.url(filename)
+			# fs = FileSystemStorage()
+			# filename = fs.save(receipt.name, receipt)
+			# file_name = fs.url(filename)
 
 			# location = '/app/ocr_receipt_scanner/{}'.format(file_name)
 
@@ -80,14 +80,14 @@ class UploadReceipt(View):
 			# 	content = image_file.read()	
 			# =======================================================
 
-			# location_to_save = '/app/receipts/{name}'.format(**{
-			# 	'name': receipt.name
-			# })
-			# print('location_to_save', location_to_save)
+			location_to_save = '/app/receipts/{name}'.format(**{
+				'name': receipt.name
+			})
+			print('location_to_save', location_to_save)
 
-			# receipt_image = Image.open(receipt)
-			# print('receipt_image', receipt_image, type(receipt_image))
-			# receipt_image.save(location_to_save)
+			receipt_image = Image.open(receipt)
+			print('receipt_image', receipt_image, type(receipt_image))
+			receipt_image.save(location_to_save)
 
 
 
@@ -102,9 +102,9 @@ class UploadReceipt(View):
 			# 	os.path.dirname(__file__),
 			# 	'resources/wakeupcat.jpg')
 
-			# file_name = location_to_save
+			file_name = location_to_save
 
-			file_name = os.path.join(str(settings.APPS_DIR), file_name)
+			# file_name = os.path.join(str(settings.APPS_DIR), file_name)
 
 			# Loads the image into memory
 			with io.open(file_name, 'rb') as image_file:
