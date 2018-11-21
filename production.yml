@@ -19,6 +19,8 @@ services:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
     command: /start
+    volumes:
+      - .:/app
 
   postgres:
     build:
