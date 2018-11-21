@@ -1,8 +1,0 @@
-# PostgreSQL
-# ------------------------------------------------------------------------------
-POSTGRES_HOST=postgres
-POSTGRES_PORT=5432
-POSTGRES_DB=ocr_receipt_scanner
-POSTGRES_USER=KMzgEhZPvFAPcWhUKfwMhxZvMaqyPsKC
-POSTGRES_PASSWORD=kX0VszK5Ux4hM19epIo8ooTniC35ad3yZ2KHiH2Zcd7znB7MI0NlMrHEBtzcn8S5
-DATABASE_URL=postgres://KMzgEhZPvFAPcWhUKfwMhxZvMaqyPsKC:kX0VszK5Ux4hM19epIo8ooTniC35ad3yZ2KHiH2Zcd7znB7MI0NlMrHEBtzcn8S5@postgres:5432/ocr_receipt_scanner
