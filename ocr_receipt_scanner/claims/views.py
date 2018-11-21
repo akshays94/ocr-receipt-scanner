@@ -14,6 +14,7 @@ from django.urls import reverse
 from django.conf import settings
 from django.http import HttpResponse
 from django.views.generic import TemplateView, View
+from django.views.decorators.csrf import csrf_exempt
 from django.template.response import TemplateResponse
 from django.core.files.storage import FileSystemStorage
 
@@ -62,8 +63,10 @@ class Home(TemplateView):
 
 
 
+
 class UploadReceipt(View):
 
+	@csrf_exempt
 	def post(self, request, *args, **kwargs):
 		try:
 
